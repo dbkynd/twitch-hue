@@ -14,15 +14,16 @@ passport.use(
       clientID: process.env.TWITCH_CLIENT_ID,
       clientSecret: process.env.TWITCH_CLIENT_SECRET,
       callbackURL: process.env.TWITCH_CALLBACK_URL,
-      scope: 'user_read',
+      scope: 'channel:read:redemptions',
     },
     (
       accessToken: string,
       refreshToken: string,
+      params: any,
       profile: UserProfile,
       done: any,
     ) => {
-      UserService.session(profile, done)
+      UserService.session(accessToken, refreshToken, params, profile, done)
     },
   ),
 )

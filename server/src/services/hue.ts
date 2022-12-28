@@ -39,13 +39,15 @@ async function handleCallback(code: string) {
       const hash2 = md5('POST:/oauth2/token')
       const response = md5(`${hash1}:${nonce}:${hash2}`)
       const authStr = `Digest username="${clientID}", realm="${digestRealm}", nonce="${nonce}", uri="/oauth2/token", response="${response}"`
-      return axios.post(
-        `https://api.meethue.com/oauth2/token?grant_type=authorization_code&code=${code}`,
-        {},
-        {
-          headers: { Authorization: authStr },
-        },
-      ).then(({data}) => data)
+      return axios
+        .post(
+          `https://api.meethue.com/oauth2/token?grant_type=authorization_code&code=${code}`,
+          {},
+          {
+            headers: { Authorization: authStr },
+          },
+        )
+        .then(({ data }) => data)
     })
     .catch((err) => {
       throw err

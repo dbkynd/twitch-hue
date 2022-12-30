@@ -15,21 +15,24 @@ function getAuthorizationURL() {
 }
 
 async function handleCallback(code: string) {
-  return axios
+  console.log(code) // xWxB7voT
+  const authStr = await axios
     .post(
       `https://api.meethue.com/oauth2/token?grant_type=authorization_code&code=${code}`,
     )
-    .then((res) => {
-      if (res.status !== 401) {
+    .catch((res) => {
+      if (res.response.status !== 401) {
         throw new Error('Invalid code or state')
       }
-      if (!res.headers['www-authenticate']) {
+      if (!res.response.headers['www-authenticate']) {
         throw new Error(
           'Unexpected error: www-authenticate headers not included in response',
         )
       }
 
-      const [digestRealmStr, nonceStr] = res.headers['www-authenticate']
+      const [digestRealmStr, nonceStr] = res.response.headers[
+        'www-authenticate'
+      ]
         .replace(/\"/g, '')
         .split(',')
       const [_, digestRealm] = digestRealmStr.split('=')
@@ -38,20 +41,18 @@ async function handleCallback(code: string) {
       const hash1 = md5(`${clientID}:${digestRealm}:${clientSecret}`)
       const hash2 = md5('POST:/oauth2/token')
       const response = md5(`${hash1}:${nonce}:${hash2}`)
-      const authStr = `Digest username="${clientID}", realm="${digestRealm}", nonce="${nonce}", uri="/oauth2/token", response="${response}"`
-      return axios
-        .post(
-          `https://api.meethue.com/oauth2/token?grant_type=authorization_code&code=${code}`,
-          {},
-          {
-            headers: { Authorization: authStr },
-          },
-        )
-        .then(({ data }) => data)
+      return `Digest username="${clientID}", realm="${digestRealm}", nonce="${nonce}", uri="/oauth2/token", response="${response}"`
     })
-    .catch((err) => {
-      throw err
-    })
+  console.log(authStr)
+  return axios
+    .post(
+      `https://api.meethue.com/oauth2/token?grant_type=authorization_code&code=${code}`,
+      {},
+      {
+        headers: { Authorization: authStr as string },
+      },
+    )
+    .then(({ data }) => data)
 }
 
 function md5(str: string) {

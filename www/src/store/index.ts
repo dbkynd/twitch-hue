@@ -2,14 +2,14 @@ import { createApp } from 'vue'
 import { createStore } from 'vuex'
 
 export default createStore({
-  state () {
+  state() {
     return {
-      count: 0
+      user: {},
     }
   },
   mutations: {
-    increment (state) {
-      state.count++
-    }
-  }
+    setUser(state, payload) {
+      state.user = payload
+    },
+  },
 })

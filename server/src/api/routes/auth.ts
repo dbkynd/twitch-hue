@@ -25,7 +25,7 @@ router.get('/hue/callback', async (req, res, next) => {
     const { code } = req.query
     const data = await HueService.handleCallback(code as string)
     console.log(data)
-    res.redirect(appUrl)
+    res.redirect(`${appUrl}/home`)
   } catch (e) {
     next(e)
   }

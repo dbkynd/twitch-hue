@@ -9,8 +9,7 @@
 </template>
 
 <script setup lang="ts">
-// import { apiUrl } from '@/config'
-const apiUrl = 'http://localhost:3000'
+import { apiUrl } from '@/plugins/config'
 
 function twitch() {
   window.location.href = `${apiUrl}/api/auth/twitch`

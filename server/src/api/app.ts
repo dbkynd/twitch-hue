@@ -1,16 +1,37 @@
 import express from 'express'
-import AuthRoutes from './routes/auth'
-import UserRoutes from './routes/user'
+import morgan from 'morgan'
+import passport from './passport'
+import Api from './routes'
+import sessionStore from './sessionStore'
 
-const router = express.Router()
+const app = express()
 
-router.use('/auth', AuthRoutes)
+app.use(express.json())
 
-router.use((req, res, next) => {
-  if (!req.user) return res.sendStatus(401)
-  next()
+const format = process.env.NODE_ENV === 'production' ? 'combined' : 'dev'
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan(format))
+}
+
+app.use(sessionStore)
+app.use(passport.initialize())
+app.use(passport.session())
+
+app.use('/api', Api)
+
+app.use((req, res, next) => {
+  res.sendStatus(404)
 })
 
-router.use('/user', UserRoutes)
+app.use(
+  (
+    err: Error,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ) => {
+    res.sendStatus(500)
+  },
+)
 
-export default router
+export default app

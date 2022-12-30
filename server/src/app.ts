@@ -3,9 +3,17 @@ import * as database from './database'
 
 export async function start(): Promise<void> {
   await database.connect()
-  server.listen()
+  server.start()
 }
 
 export async function stop(): Promise<void> {
-  await database.disconnect()
+  const shutdownSequence = [server.stop, database.disconnect]
+
+  for (let i = 0; i < shutdownSequence.length; i++) {
+    try {
+      await shutdownSequence[i]()
+    } catch (e) {
+      console.error(e)
+    }
+  }
 }

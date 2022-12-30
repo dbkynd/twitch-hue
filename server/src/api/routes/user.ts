@@ -13,7 +13,7 @@ router.get('/', async (req, res, next) => {
   }
 })
 
-router.put('/items', async (req, res, next) => {
+/*router.put('/items', async (req, res, next) => {
   const { items }: { items: Items[] } = req.body
   if (!items) return res.status(400).json({ message: 'Missing items array' })
   try {
@@ -34,6 +34,6 @@ router.put('/options', async (req, res, next) => {
   } catch (e) {
     next(e)
   }
-})
+})*/
 
 export default router

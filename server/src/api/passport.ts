@@ -1,12 +1,6 @@
-import express from 'express'
 import passport from 'passport'
 import { Strategy as TwitchStrategy } from 'passport-twitch-new'
 import UserService from '../lib/user'
-
-const app = express()
-
-app.use(passport.initialize())
-app.use(passport.session())
 
 passport.use(
   new TwitchStrategy(
@@ -23,17 +17,23 @@ passport.use(
       profile: UserProfile,
       done: any,
     ) => {
-      UserService.session(accessToken, refreshToken, params, profile, done)
+      UserService.updateSession(
+        accessToken,
+        refreshToken,
+        params,
+        profile,
+        done,
+      )
     },
   ),
 )
 
 passport.serializeUser((user, done) => {
-  done(null, user.twitchId)
+  done(null, user)
 })
 
 passport.deserializeUser((user: Express.User, done) => {
   done(null, user)
 })
 
-export default app
+export default passport

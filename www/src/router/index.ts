@@ -1,14 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import LoginView from '../views/LoginView.vue'
+import SplashView from '../views/SplashView.vue'
+import HomeView from '../views/HomeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'login',
-      component: LoginView
+      name: 'splash',
+      component: SplashView
     },
+    {
+      path: '/home',
+      name: 'home',
+      component: HomeView
+    }
   ]
 })
 

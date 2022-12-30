@@ -2,7 +2,6 @@ import express from 'express'
 import passport from 'passport'
 import { appUrl } from '../../config'
 import HueService from '../../services/hue'
-import Hue from '../../services/hue'
 
 const router = express.Router()
 
@@ -11,8 +10,8 @@ router.get('/twitch', passport.authenticate('twitch'))
 router.get(
   '/twitch/callback',
   passport.authenticate('twitch', {
-    successRedirect: appUrl,
-    failureRedirect: `${appUrl}/unauthorized`,
+    successRedirect: `${appUrl}/home`,
+    failureRedirect: `${appUrl}/error`,
   }),
 )
 

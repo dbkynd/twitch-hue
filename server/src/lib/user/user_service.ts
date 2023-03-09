@@ -17,8 +17,6 @@ function updateSession(
       profile,
       'tokens.twitch.accessToken': accessToken,
       'tokens.twitch.refreshToken': refreshToken,
-      'tokens.twitch.expiresAt':
-        new Date().valueOf() + params.expires_in * 1000,
       updatedAt: new Date(),
     },
     { upsert: true, new: true },
@@ -28,7 +26,33 @@ function updateSession(
   )
 }
 
+async function setHueToken(twitchId: string, tokenData: HueToken) {
+  console.log('twitchId', twitchId)
+  await User.findOneAndUpdate(
+    { twitchId },
+    {
+      'tokens.hue.accessToken': tokenData.access_token,
+      'tokens.hue.refreshToken': tokenData.refresh_token,
+      updatedAt: new Date(),
+    },
+    { upsert: true, new: true },
+  )
+}
+
+async function setBridgeUsername(twitchId: string, username: string) {
+  await User.findOneAndUpdate(
+    { twitchId },
+    {
+      bridgeUsername: username,
+      updatedAt: new Date(),
+    },
+    { upsert: true, new: true },
+  )
+}
+
 export default {
   getUser,
   updateSession,
+  setHueToken,
+  setBridgeUsername,
 }

@@ -2,6 +2,7 @@ import express from 'express'
 import passport from 'passport'
 import { appUrl } from '../../config'
 import HueService from '../../services/hue'
+import User from '../../lib/user'
 
 const router = express.Router()
 
@@ -23,8 +24,8 @@ router.get('/hue', (req, res, next) => {
 router.get('/hue/callback', async (req, res, next) => {
   try {
     const { code } = req.query
-    const data = await HueService.handleCallback(code as string)
-    console.log(data)
+    const tokenData: HueToken = await HueService.handleCallback(code as string)
+    await User.setHueToken(req.user, tokenData)
     res.redirect(`${appUrl}/home`)
   } catch (e) {
     next(e)

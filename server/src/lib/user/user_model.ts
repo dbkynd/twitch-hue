@@ -7,24 +7,25 @@ const schema = new Schema({
     twitch: {
       accessToken: String,
       refreshToken: String,
-      expiresAt: Date,
     },
     hue: {
       accessToken: String,
       refreshToken: String,
-      expiresAt: Date,
     },
   },
+  bridgeUsername: String,
   updatedAt: Date,
   createdAt: { type: Date, default: new Date() },
 })
 
 export interface UserDoc extends Document {
   twitchId: string
+  profile: UserProfile
   tokens: {
     twitch: Token
     hue: Token
   }
+  bridgeUsername: string
   updatedAt: Date
   createdAt: Date
 }
@@ -32,7 +33,6 @@ export interface UserDoc extends Document {
 interface Token {
   accessToken: string
   refreshToken: string
-  expiresAt: string
 }
 
 export default model<UserDoc>('users', schema)

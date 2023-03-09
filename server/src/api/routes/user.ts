@@ -7,7 +7,7 @@ router.get('/', async (req, res, next) => {
   try {
     const user = await UserService.getUser(req.user)
     if (!user) return res.sendStatus(404)
-    res.status(200).json(user)
+    res.status(200).json(user.profile)
   } catch (err) {
     next()
   }

@@ -5,9 +5,9 @@
       <v-app-bar-title> Twitch Hue Connector </v-app-bar-title>
       <v-spacer />
       <v-avatar
-        v-if="user.profile"
+        v-if="user"
         class="mr-2"
-        :image="user.profile.profile_image_url"
+        :image="user.profile_image_url"
       ></v-avatar>
     </v-app-bar>
     <v-main>

@@ -1,9 +1,6 @@
 <template>
   <main v-show="authorized">
     <div>
-      {{ user }}
-    </div>
-    <div>
       Phillips Hue Account:
       <v-btn v-if="!hueConnected" color="blue" @click="hueLogin">
         Connect
@@ -25,7 +22,7 @@
     </div>
     <div>
       Redemptions:
-      <div v-for="redeem in redemptions" :key="redeem.id">
+      <div v-for="redeem in sortedRedemptions" :key="redeem.id">
         <img
           :src="
             redeem.image ? redeem.image.url_1x : redeem.default_image.url_1x
@@ -53,7 +50,7 @@ const lights = ref([])
 const redemptions = ref([])
 
 const sortedRedemptions = computed(() => {
-  return redemptions.value.sort((a, b) => a.cost - b.cost)
+  return [...redemptions.value].sort((a, b) => a.cost - b.cost)
 })
 
 onMounted(() => {
@@ -70,17 +67,19 @@ onMounted(() => {
 })
 
 async function checkHue() {
-  await api.get('/hue/connected').then(({ data }) => {
-    hueConnected.value = data.connected
+  await api.get('/hue/status').then(({ data }) => {
+    hueConnected.value = data.hasToken
+    hueBridgeUser.value = data.hasBridge
   })
-  await api.get('/hue/bridge').then(({ data }) => {
-    hueBridgeUser.value = data.connected
-  })
-  api.get('/hue/lights').then(({ data }) => {
-    lights.value = data
-  })
+  getLights()
   api.get('/twitch/redemptions').then(({ data }) => {
     redemptions.value = data
+  })
+}
+
+function getLights() {
+  api.get('/hue/lights').then(({ data }) => {
+    lights.value = data
   })
 }
 
@@ -88,10 +87,11 @@ function hueLogin() {
   window.location.href = `${apiUrl}/api/auth/hue`
 }
 
-function createHueBridgeUser() {
-  api.post('/hue/user/create').then(({ data }) => {
-    hueBridgeUser.value = data.user
+async function createHueBridgeUser() {
+  await api.post('/hue/user/create', {}).then(() => {
+    hueBridgeUser.value = true
   })
+  getLights()
 }
 </script>
 

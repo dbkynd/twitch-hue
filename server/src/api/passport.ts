@@ -32,7 +32,12 @@ passport.serializeUser((user, done) => {
   done(null, user)
 })
 
-passport.deserializeUser((user: Express.User, done) => {
+passport.deserializeUser(async (userId: string, done) => {
+  const user = await UserService.getUser(userId)
+  if (!user) {
+    done(new Error('User Not Found'), null)
+    return
+  }
   done(null, user)
 })
 

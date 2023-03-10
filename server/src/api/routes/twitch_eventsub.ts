@@ -65,7 +65,7 @@ function getSecret() {
 
 // Build the message used to get the HMAC.
 function getHmacMessage(
-  request: Request<{}, any, any, ParsedQs, Record<string, any>>,
+  request: Request<object, any, any, ParsedQs, Record<string, any>>,
 ): string {
   return ((((request.headers[TWITCH_MESSAGE_ID] as string) +
     request.headers[TWITCH_MESSAGE_TIMESTAMP]) as string) +

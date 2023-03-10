@@ -20,7 +20,7 @@ const schema = new Schema({
 
 export interface UserDoc extends Document {
   twitchId: string
-  profile: UserProfile
+  profile: TwitchProfile
   tokens: {
     twitch: Token
     hue: Token

@@ -4,6 +4,14 @@ async function getUser(twitchId: string): Promise<UserDoc | null> {
   return User.findOne({ twitchId })
 }
 
+async function findUserByTwitchAccessToken(accessToken: string) {
+  return User.findOne({ 'tokens.twitch.accessToken': accessToken })
+}
+
+async function findUserByHueAccessToken(accessToken: string) {
+  return User.findOne({ 'tokens.hue.accessToken': accessToken })
+}
+
 function updateSession(
   accessToken: string,
   refreshToken: string,
@@ -26,8 +34,19 @@ function updateSession(
   )
 }
 
+async function setTwitchToken(twitchId: string, newToken: TwitchTokenRefresh) {
+  await User.findOneAndUpdate(
+    { twitchId },
+    {
+      'tokens.twitch.accessToken': newToken.access_token,
+      'tokens.twitch.refreshToken': newToken.refresh_token,
+      updatedAt: new Date(),
+    },
+    { upsert: true, new: true },
+  )
+}
+
 async function setHueToken(twitchId: string, tokenData: HueToken) {
-  console.log('twitchId', twitchId)
   await User.findOneAndUpdate(
     { twitchId },
     {
@@ -53,6 +72,9 @@ async function setBridgeUsername(twitchId: string, username: string) {
 export default {
   getUser,
   updateSession,
+  setTwitchToken,
   setHueToken,
   setBridgeUsername,
+  findUserByTwitchAccessToken,
+  findUserByHueAccessToken,
 }

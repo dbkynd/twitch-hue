@@ -1,4 +1,4 @@
-interface UserProfile {
+interface TwitchProfile {
   id: string
   login: string
   display_name: string
@@ -10,4 +10,11 @@ interface UserProfile {
   view_count: number
   created_at: string
   provider: 'twitch'
+}
+
+interface TwitchTokenRefresh {
+  access_token: string
+  refresh_token: string
+  scope: string[]
+  token_type: 'bearer'
 }

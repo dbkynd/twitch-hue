@@ -4,6 +4,6 @@ declare namespace Express {
 
 declare namespace Express {
   interface Request {
-    user: string
+    user: import('../lib/user/user_model').UserDoc
   }
 }

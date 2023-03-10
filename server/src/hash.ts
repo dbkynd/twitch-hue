@@ -2,7 +2,7 @@ import crypto from 'crypto'
 
 const algorithm = 'aes-256-cbc'
 const key = process.env.SECRET
-const iv = crypto.randomBytes(16)
+const iv = Buffer.from(process.env.IV, 'hex')
 
 function encrypt(text: string) {
   const cipher = crypto.createCipheriv(algorithm, key, iv)

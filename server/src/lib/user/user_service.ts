@@ -1,3 +1,4 @@
+import hash from '../../hash'
 import User, { UserDoc } from './user_model'
 
 async function getUser(twitchId: string): Promise<UserDoc | null> {
@@ -5,11 +6,13 @@ async function getUser(twitchId: string): Promise<UserDoc | null> {
 }
 
 async function findUserByTwitchAccessToken(accessToken: string) {
-  return User.findOne({ 'tokens.twitch.accessToken': accessToken })
+  return User.findOne({
+    'tokens.twitch.accessToken': hash.encrypt(accessToken),
+  })
 }
 
 async function findUserByHueAccessToken(accessToken: string) {
-  return User.findOne({ 'tokens.hue.accessToken': accessToken })
+  return User.findOne({ 'tokens.hue.accessToken': hash.encrypt(accessToken) })
 }
 
 function updateSession(
@@ -23,8 +26,8 @@ function updateSession(
     { twitchId: profile.id },
     {
       profile,
-      'tokens.twitch.accessToken': accessToken,
-      'tokens.twitch.refreshToken': refreshToken,
+      'tokens.twitch.accessToken': hash.encrypt(accessToken),
+      'tokens.twitch.refreshToken': hash.encrypt(refreshToken),
       updatedAt: new Date(),
     },
     { upsert: true, new: true },
@@ -38,8 +41,8 @@ async function setTwitchToken(twitchId: string, newToken: TwitchTokenRefresh) {
   await User.findOneAndUpdate(
     { twitchId },
     {
-      'tokens.twitch.accessToken': newToken.access_token,
-      'tokens.twitch.refreshToken': newToken.refresh_token,
+      'tokens.twitch.accessToken': hash.encrypt(newToken.access_token),
+      'tokens.twitch.refreshToken': hash.encrypt(newToken.refresh_token),
       updatedAt: new Date(),
     },
     { upsert: true, new: true },
@@ -50,8 +53,8 @@ async function setHueToken(twitchId: string, tokenData: HueToken) {
   await User.findOneAndUpdate(
     { twitchId },
     {
-      'tokens.hue.accessToken': tokenData.access_token,
-      'tokens.hue.refreshToken': tokenData.refresh_token,
+      'tokens.hue.accessToken': hash.encrypt(tokenData.access_token),
+      'tokens.hue.refreshToken': hash.encrypt(tokenData.refresh_token),
       updatedAt: new Date(),
     },
     { upsert: true, new: true },
@@ -62,7 +65,7 @@ async function setBridgeUsername(twitchId: string, username: string) {
   await User.findOneAndUpdate(
     { twitchId },
     {
-      bridgeUsername: username,
+      bridgeUsername: hash.encrypt(username),
       updatedAt: new Date(),
     },
     { upsert: true, new: true },

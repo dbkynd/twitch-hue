@@ -1,5 +1,6 @@
 import passport from 'passport'
 import { Strategy as TwitchStrategy } from 'passport-twitch-new'
+import hash from '../hash'
 import UserService from '../lib/user'
 
 passport.use(
@@ -38,6 +39,15 @@ passport.deserializeUser(async (userId: string, done) => {
     done(new Error('User Not Found'), null)
     return
   }
+  const hue = user.tokens.hue
+  const twitch = user.tokens.twitch
+  if (hue.accessToken) hue.accessToken = hash.decrypt(hue.accessToken)
+  if (hue.refreshToken) hue.refreshToken = hash.decrypt(hue.refreshToken)
+  if (twitch.accessToken) twitch.accessToken = hash.decrypt(twitch.accessToken)
+  if (twitch.refreshToken)
+    twitch.refreshToken = hash.decrypt(twitch.refreshToken)
+  if (user.bridgeUsername)
+    user.bridgeUsername = hash.decrypt(user.bridgeUsername)
   done(null, user)
 })
 
